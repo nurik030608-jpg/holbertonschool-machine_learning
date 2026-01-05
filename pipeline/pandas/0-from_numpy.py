@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-
+"""
+Module to create a DataFrame from a numpy ndarray
+"""
 import pandas as pd
-import string
+
 
 def from_numpy(array):
     """
-    Создает pd.DataFrame из np.ndarray с заголовками колонок в алфавитном порядке.
+    Creates a pd.DataFrame from a np.ndarray with alphabetical column labels.
     """
-    # Определяем количество колонок в массиве
-    num_columns = array.shape[1]
-    
-    # Генерируем список букв (A, B, C...) в зависимости от количества колонок
-    column_names = list(string.ascii_uppercase[:num_columns])
-    
-    # Создаем DataFrame
-    df = pd.DataFrame(array, columns=column_names)
-    
-    return df
+    # Получаем количество колонок
+    num_cols = array.shape[1]
+
+    # Генерируем список букв A, B, C... используя ASCII коды
+    # 65 — это код заглавной 'A'. 65 + 0 = 'A', 65 + 1 = 'B' и т.д.
+    col_names = [chr(65 + i) for i in range(num_cols)]
+
+    # Создаем и возвращаем DataFrame
+    return pd.DataFrame(array, columns=col_names)
