@@ -4,6 +4,15 @@ import pandas as pd
 
 
 def rename(df):
+    """
+    Renames Timestamp column to Datetime and converts values to datetime.
+
+    Args:
+        df: pd.DataFrame containing a column named Timestamp.
+
+    Returns:
+        The modified pd.DataFrame with only Datetime and Close columns.
+    """
     # 1. Rename the 'Timestamp' column to 'Datetime'
     df = df.rename(columns={'Timestamp': 'Datetime'})
 
