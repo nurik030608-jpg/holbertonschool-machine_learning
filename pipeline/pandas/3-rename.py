@@ -5,11 +5,11 @@ def rename(df):
     # 1. Rename the 'Timestamp' column to 'Datetime'
     df = df.rename(columns={'Timestamp': 'Datetime'})
     
-    # 2. Convert the 'Datetime' values to actual datetime objects
-    df['Datetime'] = pd.to_datetime(df['Datetime'])
+    # 2. Convert to datetime specifying the unit as seconds ('s')
+    # This corrects the 1970 vs 2019 discrepancy
+    df['Datetime'] = pd.to_datetime(df['Datetime'], unit='s')
     
-    # 3. Filter the DataFrame to keep only 'Datetime' and 'Close'
+    # 3. Filter to display only the Datetime and Close columns
     df = df[['Datetime', 'Close']]
     
-    # 4. Return the modified DataFrame
     return df
