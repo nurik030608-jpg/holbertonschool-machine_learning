@@ -10,18 +10,18 @@ def frequency():
     student_grades = np.random.normal(68, 15, 50)
     plt.figure(figsize=(6.4, 4.8))
 
-    # Определяем корзины каждые 10 единиц: [0, 10, 20, ..., 100]
-    bins = np.arange(0, 101, 10)
+    # Корзины от 0 до 100 с шагом 10
+    bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
-    # Строим гистограмму с черной обводкой (edgecolor)
     plt.hist(student_grades, bins=bins, edgecolor='black')
 
-    # Настраиваем подписи и заголовок
     plt.xlabel('Grades')
     plt.ylabel('Number of Students')
     plt.title('Project A')
 
-    # Устанавливаем деления на оси X согласно корзинам
-    plt.xticks(bins)
+    # Явно задаем границы оси X и деления
+    plt.xlim(0, 100)
+    plt.xticks(np.arange(0, 101, 10))
 
+    plt.show()
     plt.show()
