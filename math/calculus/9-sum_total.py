@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
+
 def summation_i_squared(n):
-  if not isinstanse(n ,int) or n < 0:
-    return none
-  
-  total_sum = (n * (n + 1) * (2 * n + 1)) // 6
+    """
+    Calculates the sum of i^2 from 1 to n without loops.
+    """
+    if not isinstance(n, (int, float)) or n < 0:
+        return None
     
-  return total_sum
+    n = int(n)
+    
+    result = (n * (n + 1) * (2 * n + 1)) // 6
+    
+    return result
