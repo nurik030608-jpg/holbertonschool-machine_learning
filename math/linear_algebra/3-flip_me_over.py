@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
-"""Модуль для транспонирования 2D матрицы"""
+"""Module for transposing a 2D matrix."""
 
 
 def matrix_transpose(matrix):
     """
-    Возвращает новую транспонированную матрицу.
-    
-    Аргументы:
-        matrix: 2D список (матрица).
-        
-    Возвращает:
-        Новый 2D список, где строки и столбцы поменялись местами.
+    Returns a new transposed matrix.
+
+    Args:
+        matrix: A 2D list (matrix).
+
+    Returns:
+        A new 2D list where rows and columns are swapped.
     """
-    # Вычисляем количество строк и столбцов исходной матрицы
+    # Calculate dimensions
     rows = len(matrix)
     cols = len(matrix[0])
 
-    # Создаем новую матрицу, проходя по индексам столбцов, 
-    # а затем по индексам строк
+    # Create new matrix by iterating over columns then rows
     transpose = [[matrix[i][j] for i in range(rows)] for j in range(cols)]
-    
+
     return transpose
