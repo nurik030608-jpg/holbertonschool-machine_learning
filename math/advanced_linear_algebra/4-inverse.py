@@ -21,13 +21,14 @@ def cofactor(matrix):
     n = len(matrix)
     if n == 1:
         return [[1]]
-    
+
     cofactor_mat = []
     for i in range(n):
         row_list = []
         for j in range(n):
-            sub_matrix = [row[:j] + row[j+1:] for row in (matrix[:i] + matrix[i+1:])]
-            row_list.append(((-1) ** (i + j)) * determinant(sub_matrix))
+            # Split line to stay under 79 characters
+            sub = [row[:j] + row[j+1:] for row in (matrix[:i] + matrix[i+1:])]
+            row_list.append(((-1) ** (i + j)) * determinant(sub))
         cofactor_mat.append(row_list)
     return cofactor_mat
 
@@ -35,9 +36,10 @@ def cofactor(matrix):
 def inverse(matrix):
     """Calculates the inverse of a square matrix"""
     # Validation
-    if not isinstance(matrix, list) or not all(isinstance(row, list) for row in matrix):
+    if not isinstance(matrix, list) or not all(isinstance(row, list)
+                                               for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    
+
     n = len(matrix)
     if n == 0 or any(len(row) != n for row in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
