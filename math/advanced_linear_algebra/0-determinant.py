@@ -21,7 +21,7 @@ def determinant(matrix):
     # Check if matrix is a list
     if not isinstance(matrix, list):
         raise TypeError("matrix must be a list of lists")
-    
+
     # Handle the 0x0 case [[]] or []
     if matrix == [[]] or matrix == []:
         return 1
@@ -31,7 +31,7 @@ def determinant(matrix):
         raise TypeError("matrix must be a list of lists")
 
     n = len(matrix)
-    
+
     # Check if square matrix
     for row in matrix:
         if len(row) != n:
