@@ -28,8 +28,6 @@ class Poisson:
             # Рассчитываем лямбду как среднее арифметическое данных
             self.lambtha = float(sum(data) / len(data))
             
-#!/usr/bin/env python3
-"""Модуль содержит класс Poisson для работы с распределением Пуассона."""
 
 
 class Poisson:
