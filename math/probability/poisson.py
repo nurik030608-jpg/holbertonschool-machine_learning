@@ -30,7 +30,6 @@ class Poisson:
             
 
 
-class Poisson:
     """Представляет распределение Пуассона."""
 
     def __init__(self, data=None, lambtha=1.):
