@@ -15,20 +15,18 @@ def specificity(confusion):
     """
     # TP is the diagonal of the matrix
     tp = np.diag(confusion)
-    
+
     # FP is the sum of the columns minus the true positives
     fp = np.sum(confusion, axis=0) - tp
-    
+
     # FN is the sum of the rows minus the true positives
     fn = np.sum(confusion, axis=1) - tp
-    
+
     # TN is the total sum minus (TP + FP + FN)
-    # This represents all samples correctly identified as NOT belonging to the class
     total = np.sum(confusion)
     tn = total - (tp + fp + fn)
-    
+
     # Specificity = TN / (TN + FP)
-    # TN + FP is also equivalent to the total number of actual negative samples
-    specificity_values = tn / (tn + fp)
-    
-    return specificity_values
+    spec = tn / (tn + fp)
+
+    return spec
