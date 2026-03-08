@@ -1,37 +1,32 @@
 #!/usr/bin/env python3
 """
-Модуль, содержащий класс Neuron для бинарной классификации.
+Module that defines a single neuron performing binary classification
 """
 import numpy as np
 
 
 class Neuron:
     """
-    Класс, описывающий один нейрон, выполняющий бинарную классификацию.
+    Class Neuron that defines a single neuron performing binary classification
     """
 
     def __init__(self, nx):
         """
-        Конструктор класса.
-
+        Class constructor
         Args:
-            nx (int): Количество входных признаков (features) нейрона.
-
-        Raises:
-            TypeError: Если nx не является целым числом.
-            ValueError: Если nx меньше 1.
+            nx: number of input features to the neuron
         """
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
 
-        # W: Вектор весов, инициализированный случайным нормальным распределением.
-        # Используем размерность (1, nx).
+        # Weights vector initialized using a random normal distribution
+        # Size is (1, nx) to stay consistent with vectorization
         self.W = np.random.randn(1, nx)
 
-        # b: Смещение (bias), инициализированное в 0.
+        # The bias for the neuron
         self.b = 0
 
-        # A: Активированный выход (предсказание), инициализированный в 0.
+        # The activated output of the neuron (prediction)
         self.A = 0
