@@ -9,38 +9,35 @@ def train_model(network, data, labels, batch_size, epochs,
                 validation_data=None, early_stopping=False, patience=0,
                 learning_rate_decay=False, alpha=0.1, decay_rate=1,
                 save_best=False, filepath=None, verbose=True, shuffle=False):
-                
     """
     Trains a model using various callbacks including EarlyStopping,
     LearningRateScheduler, and ModelCheckpoint.
     """
     callbacks = []
 
-    # Early Stopping logic
-    if validation_data and early_stopping:
-        callbacks.append(K.callbacks.EarlyStopping(
-            monitor='val_loss',
-            patience=patience
-        ))
+    if validation_data:
+        if early_stopping:
+            callbacks.append(K.callbacks.EarlyStopping(
+                monitor='val_loss',
+                patience=patience
+            ))
 
-    # Learning Rate Decay logic
-    if validation_data and learning_rate_decay:
-        def scheduler(epoch):
-            """ Inverse time decay function """
-            return alpha / (1 + decay_rate * epoch)
-        callbacks.append(K.callbacks.LearningRateScheduler(
-            scheduler,
-            verbose=1
-        ))
+        if learning_rate_decay:
+            def scheduler(epoch):
+                """ Inverse time decay function """
+                return alpha / (1 + decay_rate * epoch)
+            callbacks.append(K.callbacks.LearningRateScheduler(
+                scheduler,
+                verbose=1
+            ))
 
-    # Save Best Model logic
-    if validation_data and save_best and filepath:
-        callbacks.append(K.callbacks.ModelCheckpoint(
-            filepath=filepath,
-            monitor='val_loss',
-            save_best_only=True,
-            mode='min'
-        ))
+        if save_best and filepath:
+            callbacks.append(K.callbacks.ModelCheckpoint(
+                filepath=filepath,
+                monitor='val_loss',
+                save_best_only=True,
+                mode='min'
+            ))
 
     history = network.fit(
         x=data,
