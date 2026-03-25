@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
-"""
-Module for building and visualizing a Decision Tree
-"""
+""" Module for a clean, recursive Decision Tree visualization. """
 
 
 class Node:
-    """
-    Represents an internal node in a decision tree
-    """
+    """ Represents an internal node. """
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, depth=None, is_root=False):
-        """ Initializes the internal node """
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -20,59 +15,56 @@ class Node:
         self.is_leaf = False
 
     def count_nodes_below(self, only_leaves=False):
-        """ Recursively counts the nodes or leaves """
-        left_count = self.left_child.count_nodes_below(only_leaves)
-        right_count = self.right_child.count_nodes_below(only_leaves)
-        if only_leaves:
-            return left_count + right_count
-        return 1 + left_count + right_count
+        """ Counts nodes recursively. """
+        left = self.left_child.count_nodes_below(only_leaves)
+        right = self.right_child.count_nodes_below(only_leaves)
+        return (left + right) if only_leaves else (1 + left + right)
 
-    def left_child_add_prefix(self, text):
-        """ Adds prefix for the left child visualization """
+    def _add_prefix(self, text, is_left_child):
+        """ Helper to add prefixes with correct alignment. """
         lines = text.split("\n")
-        # Added '---> ' to match the expected format
+        # Формируем первую строку с веткой
         new_text = "    +---> " + lines[0] + "\n"
-        for x in lines[1:]:
-            if x:
-                new_text += ("    |      " + x) + "\n"
-        return new_text
-
-    def right_child_add_prefix(self, text):
-        """ Adds prefix for the right child visualization """
-        lines = text.split("\n")
-        # Added '---> ' to match the expected format
-        new_text = "    +---> " + lines[0] + "\n"
-        for x in lines[1:]:
-            if x:
-                new_text += ("           " + x) + "\n"
+        # Для остальных строк: если левый ребенок, рисуем | , если правый - пусто
+        padding = "    |      " if is_left_child else "           "
+        for line in lines[1:]:
+            if line:
+                new_text += padding + line + "\n"
         return new_text
 
     def __str__(self):
-        """ Returns the string representation of the node and its children """
-        if self.is_root:
-            out = f"root [feature={self.feature}, threshold={self.threshold}]\n"
-        else:
-            out = f"node [feature={self.feature}, threshold={self.threshold}]\n"
-
-        l_str = self.left_child_add_prefix(self.left_child.__str__())
-        r_str = self.right_child_add_prefix(self.right_child.__str__())
-
-        return out + l_str + r_str
+        """ Recursive tree string representation. """
+        label = "root" if self.is_root else "node"
+        out = f"{label} [feature={self.feature}, threshold={self.threshold}]\n"
+        out += self._add_prefix(str(self.left_child), True)
+        out += self._add_prefix(str(self.right_child), False)
+        return out
 
 
 class Leaf:
-    """
-    Represents a leaf node in a decision tree
-    """
+    """ Represents a leaf. """
     def __init__(self, value, depth=None):
-        """ Initializes the leaf """
         self.value = value
         self.depth = depth
         self.is_leaf = True
 
     def count_nodes_below(self, only_leaves=False):
-        """ Returns 1 for a leaf """
+        """ Leaves always count as 1. """
         return 1
 
     def __str__(self):
-        """ Returns the string representation of a leaf """
+        return f"-> leaf [value={self.value}]"
+
+
+class Decision_Tree:
+    """ Main Tree class. """
+    def __init__(self, root=None, max_depth=10, min_pop=1,
+                 seed=0, split_criterion="gini"):
+        self.root = root
+
+    def count_nodes(self, only_leaves=False):
+        """ Entry point for counting. """
+        return self.root.count_nodes_below(only_leaves=only_leaves)
+
+    def __str__(self):
+        return str(self.root)
