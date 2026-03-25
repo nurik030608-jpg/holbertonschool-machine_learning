@@ -10,6 +10,7 @@ class Node:
     """
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, depth=None, is_root=False):
+        """ Initializes the internal node """
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -22,8 +23,9 @@ class Node:
         """
         Recursively counts the nodes or leaves below and including this node.
         """
-        left_count = self.left_child.count_nodes_below(only_leaves=only_leaves)
-        right_count = self.right_child.count_nodes_below(only_leaves=only_leaves)
+        # Lines broken to ensure they stay under 80 characters
+        left_count = self.left_child.count_nodes_below(only_leaves)
+        right_count = self.right_child.count_nodes_below(only_leaves)
 
         if only_leaves:
             return left_count + right_count
@@ -36,6 +38,7 @@ class Leaf:
     Represents a leaf node in a decision tree
     """
     def __init__(self, value, depth=None):
+        """ Initializes the leaf """
         self.value = value
         self.depth = depth
         self.is_leaf = True
@@ -53,6 +56,7 @@ class Decision_Tree:
     """
     def __init__(self, root=None, max_depth=10, min_pop=1,
                  seed=0, split_criterion="gini"):
+        """ Initializes the decision tree """
         self.root = root
         self.max_depth = max_depth
         self.min_pop = min_pop
