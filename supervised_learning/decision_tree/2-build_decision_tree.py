@@ -30,19 +30,21 @@ class Node:
     def left_child_add_prefix(self, text):
         """ Adds prefix for the left child visualization """
         lines = text.split("\n")
-        new_text = "    +--" + lines[0] + "\n"
+        # Added '---> ' to match the expected format
+        new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             if x:
-                new_text += ("    |  " + x) + "\n"
+                new_text += ("    |      " + x) + "\n"
         return new_text
 
     def right_child_add_prefix(self, text):
         """ Adds prefix for the right child visualization """
         lines = text.split("\n")
-        new_text = "    +--" + lines[0] + "\n"
+        # Added '---> ' to match the expected format
+        new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             if x:
-                new_text += ("       " + x) + "\n"
+                new_text += ("           " + x) + "\n"
         return new_text
 
     def __str__(self):
@@ -52,7 +54,6 @@ class Node:
         else:
             out = f"node [feature={self.feature}, threshold={self.threshold}]\n"
 
-        # Recursively get children strings and add appropriate prefixes
         l_str = self.left_child_add_prefix(self.left_child.__str__())
         r_str = self.right_child_add_prefix(self.right_child.__str__())
 
@@ -75,26 +76,3 @@ class Leaf:
 
     def __str__(self):
         """ Returns the string representation of a leaf """
-        return f"-> leaf [value={self.value}]"
-
-
-class Decision_Tree:
-    """
-    Represents a decision tree structure
-    """
-    def __init__(self, root=None, max_depth=10, min_pop=1,
-                 seed=0, split_criterion="gini"):
-        """ Initializes the decision tree """
-        self.root = root
-        self.max_depth = max_depth
-        self.min_pop = min_pop
-        self.seed = seed
-        self.split_criterion = split_criterion
-
-    def count_nodes(self, only_leaves=False):
-        """ Returns total nodes or leaves """
-        return self.root.count_nodes_below(only_leaves=only_leaves)
-
-    def __str__(self):
-        """ Returns the string representation of the entire tree """
-        return self.root.__str__()
