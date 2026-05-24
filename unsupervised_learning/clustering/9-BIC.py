@@ -48,7 +48,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     log_likelihoods = []
     bic_values = []
 
-    # Разрешено использовать строго 1 цикл
+    # Используем ровно 1 цикл для перебора количества кластеров k
     for k in range(kmin, kmax + 1):
         res = expectation_maximization(X, k, iterations, tol, verbose)
         if res is None:
@@ -57,31 +57,10 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         pi, m, S, log_lh = res
         results.append((pi, m, S))
 
-        # Если из EM возвращается массив значений по итерациям,
-        # берём именно последнее (итоговое) значение правдоподобия
-        if isinstance(log_lh, (list, np.ndarray)):
-            log_lh_value = log_lh[-1]
-        else:
-            log_lh_value = log_lh
+        # Сохраняем значение логарифма правдоподобия
+        log_likelihoods.append(log_lh)
 
-        log_likelihoods.append(log_lh_value)
-
-        # Вычисляем количество свободных параметров p:
-        # (k - 1) — для смешивающих коэффициентов pi
-        # (k * d) — для векторов математических ожиданий m
-        # (k * d * (d + 1) / 2) — для симметричных матриц ковариации S
-        p = (k - 1) + (k * d) + (k * d * (d + 1) / 2)
-
-        # Вычисляем BIC по формуле из условия: p * ln(n) - 2 * l
-        bic = p * np.log(n) - 2 * log_lh_value
-        bic_values.append(bic)
-
-    l = np.array(log_likelihoods)
-    b = np.array(bic_values)
-
-    # Оптимальным решением является k с минимальным значением BIC
-    best_idx = np.argmin(b)
-    best_k = kmin + best_idx
-    best_result = results[best_idx]
-
-    return best_k, best_result, l, b
+        # Вычисляем число свободных параметров (p) в модели GMM:
+        # 1. Смешивающие коэффициенты (pi): k - 1 свободных параметров (сумма = 1)
+        # 2. Центроиды (m): k * d параметров
+        # 3. Матрицы ковариации (S): k * d * (d + 1)
