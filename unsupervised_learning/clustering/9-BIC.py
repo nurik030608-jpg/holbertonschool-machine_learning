@@ -48,6 +48,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     log_likelihoods = []
     bic_values = []
 
+    # Разрешено использовать строго 1 цикл
     for k in range(kmin, kmax + 1):
         res = expectation_maximization(X, k, iterations, tol, verbose)
         if res is None:
@@ -56,6 +57,8 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         pi, m, S, log_lh = res
         results.append((pi, m, S))
 
+        # Если из EM возвращается массив значений по итерациям,
+        # берём именно последнее (итоговое) значение правдоподобия
         if isinstance(log_lh, (list, np.ndarray)):
             log_lh_value = log_lh[-1]
         else:
@@ -63,16 +66,20 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
 
         log_likelihoods.append(log_lh_value)
 
-        # Номер свободных параметров модели
+        # Вычисляем количество свободных параметров p:
+        # (k - 1) — для смешивающих коэффициентов pi
+        # (k * d) — для векторов математических ожиданий m
+        # (k * d * (d + 1) / 2) — для симметричных матриц ковариации S
         p = (k - 1) + (k * d) + (k * d * (d + 1) / 2)
 
-        # Формула расчета BIC
+        # Вычисляем BIC по формуле из условия: p * ln(n) - 2 * l
         bic = p * np.log(n) - 2 * log_lh_value
         bic_values.append(bic)
 
     l = np.array(log_likelihoods)
     b = np.array(bic_values)
 
+    # Оптимальным решением является k с минимальным значением BIC
     best_idx = np.argmin(b)
     best_k = kmin + best_idx
     best_result = results[best_idx]
