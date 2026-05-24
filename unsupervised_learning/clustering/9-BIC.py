@@ -2,12 +2,8 @@
 """
 Module to find the best number of clusters for a GMM using BIC.
 """
-import importlib
 import numpy as np
-
-# Корректный динамический импорт модуля с цифрой и дефисом в названии
-em_module = importlib.import_module("8-EM")
-expectation_maximization = em_module.expectation_maximization
+expectation_maximization = __import__('8-EM').expectation_maximization
 
 
 def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
@@ -59,12 +55,32 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
 
         pi, m, S, log_lh = res
         results.append((pi, m, S))
-        
+
         # Если из EM приходит массив/список значений по итерациям,
         # берем последнее (итоговое) значение логарифма правдоподобия
         if isinstance(log_lh, (list, np.ndarray)):
             log_lh_value = log_lh[-1]
         else:
             log_lh_value = log_lh
-            
-        log_likelihoods.append(log_
+
+        log_likelihoods.append(log_lh_value)
+
+        # Вычисляем количество параметров p для модели GMM:
+        # (k - 1) для априорных вероятностей pi
+        # (k * d) для средних значений m
+        # (k * d * (d + 1) / 2) для симметричных матриц ковариации S
+        p = (k - 1) + (k * d) + (k * d * (d + 1) / 2)
+
+        # Формула расчета BIC
+        bic = p * np.log(n) - 2 * log_lh_value
+        bic_values.append(bic)
+
+    l = np.array(log_likelihoods)
+    b = np.array(bic_values)
+
+    # Оптимальным считается k с наименьшим значением BIC
+    best_idx = np.argmin(b)
+    best_k = kmin + best_idx
+    best_result = results[best_idx]
+
+    return best_k, best_result, l, b
