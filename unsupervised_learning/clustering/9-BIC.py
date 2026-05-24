@@ -2,8 +2,12 @@
 """
 Module to find the best number of clusters for a GMM using BIC.
 """
+import importlib
 import numpy as np
-expectation_maximization = __import__('8-EM').expectation_maximization
+
+# Корректный динамический импорт модуля с цифрой и дефисом в названии
+em_module = importlib.import_module("8-EM")
+expectation_maximization = em_module.expectation_maximization
 
 
 def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
@@ -44,4 +48,23 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     if not isinstance(verbose, bool):
         return None, None, None, None
 
-    # Инициализи
+    results = []
+    log_likelihoods = []
+    bic_values = []
+
+    for k in range(kmin, kmax + 1):
+        res = expectation_maximization(X, k, iterations, tol, verbose)
+        if res is None:
+            return None, None, None, None
+
+        pi, m, S, log_lh = res
+        results.append((pi, m, S))
+        
+        # Если из EM приходит массив/список значений по итерациям,
+        # берем последнее (итоговое) значение логарифма правдоподобия
+        if isinstance(log_lh, (list, np.ndarray)):
+            log_lh_value = log_lh[-1]
+        else:
+            log_lh_value = log_lh
+            
+        log_likelihoods.append(log_
