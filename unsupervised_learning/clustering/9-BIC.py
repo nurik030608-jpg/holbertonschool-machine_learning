@@ -56,7 +56,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         pi, m, S, log_lh = res
         results.append((pi, m, S))
 
-        # Если из EM приходит массив значений, берем последнее
         if isinstance(log_lh, (list, np.ndarray)):
             log_lh_value = log_lh[-1]
         else:
@@ -64,10 +63,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
 
         log_likelihoods.append(log_lh_value)
 
-        # Вычисляем количество параметров p для модели GMM:
-        # (k - 1) для априорных вероятностей pi
-        # (k * d) для средних значений m
-        # (k * d * (d + 1) / 2) для симметричных матриц ковариации S
+        # Номер свободных параметров модели
         p = (k - 1) + (k * d) + (k * d * (d + 1) / 2)
 
         # Формула расчета BIC
@@ -77,7 +73,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     l = np.array(log_likelihoods)
     b = np.array(bic_values)
 
-    # Оптимальным считается k с наименьшим значением BIC
     best_idx = np.argmin(b)
     best_k = kmin + best_idx
     best_result = results[best_idx]
