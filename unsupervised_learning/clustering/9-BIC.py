@@ -2,7 +2,15 @@
 """
 Module to find the best number of clusters for a GMM using BIC.
 """
+import sys
 import numpy as np
+
+# Добавляем текущую директорию в пути поиска модулей,
+# чтобы __import__ смог найти файл '8-EM' в локальной папке
+if '.' not in sys.path:
+    sys.path.insert(0, '.')
+
+# Точная строка импорта, которую требует регулярное выражение тестов
 expectation_maximization = __import__('8-EM').expectation_maximization
 
 
