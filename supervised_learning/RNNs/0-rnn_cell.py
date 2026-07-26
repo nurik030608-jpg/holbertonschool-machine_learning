@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Module that contains the RNNCell class."""
-import numpy as np
-
 
 class RNNCell:
     """Represents a cell of a simple RNN."""
