@@ -1,33 +1,45 @@
 #!/usr/bin/env python3
-"""Loads the FrozenLake environment from Gymnasium."""
+"""Module to test a trained agent playing FrozenLake."""
 
-import gymnasium as gym
+import numpy as np
 
 
-def load_frozen_lake(desc=None, map_name=None, is_slippery=False):
-  """Loads the pre-made FrozenLakeEnv environment from gymnasium.
+def play(env, Q, max_steps=100):
+  """Has the trained agent play an episode using pure exploitation.
 
   Args:
-      desc: list of lists containing a custom description of the map, or None.
-      map_name: string containing the pre-made map name to load, or None.
-      is_slippery: boolean determining if the ice is slippery.
+      env: The FrozenLakeEnv instance (configured with render_mode="ansi").
+      Q (np.ndarray): The trained Q-table containing state-action values.
+      max_steps (int): The maximum number of steps allowed in the episode.
 
   Returns:
-      The initialized gymnasium environment with render_mode="ansi".
+      tuple: (total_reward, rendered_outputs)
+          - total_reward: Total accumulated reward for the episode.
+          - rendered_outputs: List of board renders captured at each step.
   """
-  if desc is None and map_name is None:
-    map_name = '8x8'
+  rendered_outputs = []
+  total_reward = 0
 
-  if desc is not None:
-    env = gym.make(
-        'FrozenLake-v1', desc=desc, is_slippery=is_slippery, render_mode='ansi'
-    )
-  else:
-    env = gym.make(
-        'FrozenLake-v1',
-        map_name=map_name,
-        is_slippery=is_slippery,
-        render_mode='ansi',
-    )
+  state, _ = env.reset()
 
-  return env
+  # Capture and display initial state before any action
+  board_state = env.render()
+  rendered_outputs.append(board_state)
+  print(board_state)
+
+  for step in range(max_steps):
+    # Pure exploitation: always pick action with max Q-value
+    action = np.argmax(Q[state])
+
+    state, reward, terminated, truncated, _ = env.step(action)
+    total_reward += reward
+
+    # Capture and display the updated board state
+    board_state = env.render()
+    rendered_outputs.append(board_state)
+    print(board_state)
+
+    if terminated or truncated:
+      break
+
+  return total_reward, rendered_outputs
