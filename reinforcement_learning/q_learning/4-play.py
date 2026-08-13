@@ -22,22 +22,20 @@ def play(env, Q, max_steps=100):
 
   state, _ = env.reset()
 
-  # Capture and display initial state before any action
+  # Capture initial state before any action
   board_state = env.render()
   rendered_outputs.append(board_state)
-  print(board_state)
 
   for step in range(max_steps):
-    # Pure exploitation: always pick action with max Q-value
+    # Pure exploitation: always pick action with highest Q-value
     action = np.argmax(Q[state])
 
     state, reward, terminated, truncated, _ = env.step(action)
     total_reward += reward
 
-    # Capture and display the updated board state
+    # Capture board state after step
     board_state = env.render()
     rendered_outputs.append(board_state)
-    print(board_state)
 
     if terminated or truncated:
       break
