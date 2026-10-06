@@ -1,33 +1,50 @@
 #!/usr/bin/env python3
-"""Monte Carlo algorithm"""
+"""
+Moojulii algorithmii Monte Carlo qabu.
+"""
 import numpy as np
 
 
-def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
-                alpha=0.1, gamma=0.99):
-    """Performs the Monte Carlo algorithm and returns V"""
-    desc = env.unwrapped.desc.reshape(-1)
+def monte_carlo(env, V, policy, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99):
+    """
+    Algorithmii Monte Carlo fayyadamuun value function hojjetaa.
 
-    for i in range(episodes):
+    Args:
+        env: Instansii naannoo (environment)
+        V: Array numpy isa gosa (s,) qabu
+        policy: Funkshinii haala fi tarkaanfii itti aanu kennu
+        episodes: Baay'ina episoodii leenjii
+        max_steps: Tarkaanfii guddaa episoodii tokko keessatti
+        alpha: Reetii barnootaa (learning rate)
+        gamma: Reetii gadi xiqqessuu (discount rate)
+
+    Returns:
+        V: Tilmaama gatii haaromfame (updated value estimate)
+    """
+    for _ in range(episodes):
         state, _ = env.reset()
         episode = []
 
         for _ in range(max_steps):
             action = policy(state)
-            new_state, reward, terminated, truncated, _ = env.step(action)
-            if desc[new_state] == b'H':
-                reward = -1
-            episode.append([state, action, reward])
+            next_state, reward, terminated, truncated, _ = env.step(action)
+            episode.append((state, action, reward))
+
             if terminated or truncated:
                 break
-            state = new_state
 
-        episode = np.array(episode, dtype=int)
+            state = next_state
+
         G = 0
-        for j, step in enumerate(episode[::-1]):
-            state, action, reward = step
-            G = gamma * G + reward
-            if state not in episode[:i - j, 0]:
-                V[state] = V[state] + alpha * (G - V[state])
+        visited_states = set()
+
+        # Episoodii boodarraa gara jalqabaatti deebi'uun maallaqa/gatii hisaabuu
+        for s, a, r in reversed(episode):
+            G = gamma * G + r
+
+            # First-visit Monte Carlo
+            if s not in visited_states:
+                visited_states.add(s)
+                V[s] = V[s] + alpha * (G - V[s])
 
     return V
