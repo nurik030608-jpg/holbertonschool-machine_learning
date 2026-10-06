@@ -5,7 +5,7 @@ import numpy as np
 
 def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
                 alpha=0.1, gamma=0.99):
-    """Performs the Monte Carlo algorithm (every-visit) and returns V"""
+    """Performs the first-visit Monte Carlo algorithm and returns V"""
     for _ in range(episodes):
         state, _ = env.reset()
         episode = []
@@ -18,9 +18,12 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
             if terminated or truncated:
                 break
 
+        states = [s for s, _ in episode]
         G = 0
-        for s, r in reversed(episode):
+        for t in range(len(episode) - 1, -1, -1):
+            s, r = episode[t]
             G = r + gamma * G
-            V[s] = V[s] + alpha * (G - V[s])
+            if s not in states[:t]:
+                V[s] = V[s] + alpha * (G - V[s])
 
     return V
