@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Policy Gradient Training Script
+Module that contains the train function for policy gradient RL.
 """
 
 import numpy as np
@@ -10,67 +10,47 @@ policy_gradient = __import__('policy_gradient').policy_gradient
 
 def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
     """
-    Implements full training of an agent using policy gradient.
+    Trains a policy gradient agent in the given environment.
 
-    env: initial environment
-    nb_episodes: total number of episodes used for training
-    alpha: learning rate
-    gamma: discount factor
+    Args:
+        env: initial environment
+        nb_episodes: number of episodes used for training
+        alpha: the learning rate
+        gamma: the discount factor
 
-    Returns: list of scores for each episode
+    Returns:
+        scores: list of all scores per episode
     """
-    # Инициализация весов
-    state = env.reset()
-    if isinstance(state, tuple):
-        state = state[0]
-
-    input_dim = state.shape[0] if hasattr(state, "shape") else len(state)
-    output_dim = (
-        env.action_space.n
-        if hasattr(env.action_space, "n")
-        else env.action_space.shape[0]
-    )
-    weight = np.random.rand(input_dim, output_dim)
-
+    weight = np.random.rand(env.observation_space.shape[0],
+                            env.action_space.n)
     scores = []
 
-    for episode in range(1, nb_episodes + 1):
+    for episode in range(nb_episodes):
         state = env.reset()
-        if isinstance(state, tuple):
-            state = state[0]
-
-        episode_gradients = []
         episode_rewards = []
-        done = False
+        episode_gradients = []
 
-        while not done:
+        while True:
             action, grad = policy_gradient(state, weight)
+            next_state, reward, done, _ = env.step(action)
 
-            step_result = env.step(action)
-            if len(step_result) == 5:
-                next_state, reward, terminated, truncated, _ = step_result
-                done = terminated or truncated
-            else:
-                next_state, reward, done, _ = step_result
-
-            episode_gradients.append(grad)
             episode_rewards.append(reward)
+            episode_gradients.append(grad)
+
+            if done:
+                break
+
             state = next_state
 
         score = sum(episode_rewards)
         scores.append(score)
 
-        # Расчет дисконтированных вознаграждений и обновление весов
-        T = len(episode_rewards)
-        for t in range(T):
-            G = sum(
-                [
-                    gamma ** (k - t) * episode_rewards[k]
-                    for k in range(t, T)
-                ]
-            )
-            weight += alpha * episode_gradients[t] * G
+        # Вычисление дисконтированных наград и обновление весов
+        for i in range(len(episode_rewards)):
+            G = sum([r * (gamma ** idx)
+                     for idx, r in enumerate(episode_rewards[i:])])
+            weight += alpha * episode_gradients[i] * G
 
-        print("Episode: {} Score: {}".format(episode, score))
+        print(f"Episode: {episode} Score: {score}")
 
     return scores
