@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""
+Модуль для создания сверточного автоэнкодера
+"""
 import tensorflow as tf
 
 
@@ -6,14 +10,16 @@ def autoencoder(input_dims, filters, latent_dims):
     Creates a convolutional autoencoder model.
 
     Args:
-        input_dims: tuple of integers, dimensions of the model input
-        filters: list of integers, number of filters for each convolutional layer in the encoder
-        latent_dims: tuple of integers, dimensions of the latent space representation
+        input_dims: tuple of integers containing the dimensions of the model input
+        filters: list containing the number of filters for each convolutional
+                 layer in the encoder, respectively
+        latent_dims: tuple of integers containing the dimensions of the latent
+                     space representation
 
     Returns:
         encoder: the encoder model
         decoder: the decoder model
-        auto: the full autoencoder model compiled with adam and binary_crossentropy
+        auto: the full autoencoder model
     """
     # -------------------
     # ENCODER
@@ -21,7 +27,6 @@ def autoencoder(input_dims, filters, latent_dims):
     encoder_inputs = tf.keras.Input(shape=input_dims)
     x = encoder_inputs
 
-    # Проходим по фильтрам для энкодера
     for f in filters:
         x = tf.keras.layers.Conv2D(
             filters=f,
@@ -31,7 +36,7 @@ def autoencoder(input_dims, filters, latent_dims):
         )(x)
         x = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), padding='same')(x)
 
-    encoder_outputs = x  # Должно соответствовать latent_dims
+    encoder_outputs = x
     encoder = tf.keras.Model(inputs=encoder_inputs, outputs=encoder_outputs, name='encoder')
 
     # -------------------
@@ -40,10 +45,9 @@ def autoencoder(input_dims, filters, latent_dims):
     decoder_inputs = tf.keras.Input(shape=latent_dims)
     x = decoder_inputs
 
-    # Фильтры для декодера меняются на обратные
     reversed_filters = filters[::-1]
 
-    # Все свертки кроме последних двух
+    # Все свертки, кроме последних двух
     for f in reversed_filters[:-1]:
         x = tf.keras.layers.Conv2D(
             filters=f,
@@ -62,27 +66,4 @@ def autoencoder(input_dims, filters, latent_dims):
     )(x)
     x = tf.keras.layers.UpSampling2D(size=(2, 2))(x)
 
-    # Последняя свертка: фильтры = количество каналов в input_dims, activation='sigmoid', без UpSampling
-    num_channels = input_dims[-1]
-    decoder_outputs = tf.keras.layers.Conv2D(
-        filters=num_channels,
-        kernel_size=(3, 3),
-        padding='same',
-        activation='sigmoid'
-    )(x)
-
-    decoder = tf.keras.Model(inputs=decoder_inputs, outputs=decoder_outputs, name='decoder')
-
-    # -------------------
-    # AUTOENCODER
-    # -------------------
-    auto_inputs = encoder_inputs
-    encoded_repr = encoder(auto_inputs)
-    reconstructed = decoder(encoded_repr)
-
-    auto = tf.keras.Model(inputs=auto_inputs, outputs=reconstructed, name='autoencoder')
-
-    # Компиляция автоэнкодера с оптимизатором Adam и бинарной кросс-энтропией
-    auto.compile(optimizer='adam', loss='binary_crossentropy')
-
-    return encoder, decoder, auto
+    # Последняя
