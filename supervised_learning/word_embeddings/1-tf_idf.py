@@ -58,8 +58,14 @@ def tf_idf(sentences, vocab=None):
     nonzero_df = df > 0
     idf[nonzero_df] = np.log(s / df[nonzero_df])
 
-    # Compute final TF-IDF embeddings
-    embeddings = tf * idf
+    # Unnormalized TF-IDF
+    tf_idf_matrix = tf * idf
+
+    # L2 normalize embeddings row by row
+    norms = np.linalg.norm(tf_idf_matrix, axis=1, keepdims=True)
+    # Avoid division by zero
+    norms[norms == 0] = 1.0
+    embeddings = tf_idf_matrix / norms
 
     # Convert features to numpy array for exact print formatting
     features = np.array(features)
