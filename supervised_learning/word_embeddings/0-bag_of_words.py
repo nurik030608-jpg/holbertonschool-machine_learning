@@ -44,7 +44,7 @@ def bag_of_words(sentences, vocab=None):
             if word in feat_to_idx:
                 embeddings[i, feat_to_idx[word]] += 1
 
-    # Convert features list to numpy array to match expected string format when printed
+    # Convert features list to numpy array for expected string representation
     features = np.array(features)
 
     return embeddings, features
