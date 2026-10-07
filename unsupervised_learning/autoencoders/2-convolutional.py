@@ -1,59 +1,45 @@
 #!/usr/bin/env python3
 """
-Defines a convolutional autoencoder model.
+Defines a vanilla autoencoder model.
 """
-import tensorflow.keras as keras
+import tensorflow as tf
 
 
-def autoencoder(input_dims, filters, latent_dims):
+def autoencoder(input_dims, hidden_layers, latent_dims):
     """
-    Creates a convolutional autoencoder network.
+    Creates a vanilla autoencoder network.
 
     Args:
-        input_dims: tuple of integers containing dimensions of model input
-        filters: list containing number of filters for each conv layer
-                 in encoder
-        latent_dims: tuple of integers containing dimensions of latent space
+        input_dims: integer containing the dimensions of the model input
+        hidden_layers: list containing the number of nodes for each hidden
+                       layer in the encoder, respectively
+        latent_dims: integer containing the dimensions of the latent space
 
     Returns:
         encoder, decoder, auto
     """
     # --- Encoder ---
-    inputs = keras.Input(shape=input_dims)
+    inputs = tf.keras.Input(shape=(input_dims,))
     x = inputs
-    for f in filters:
-        x = keras.layers.Conv2D(
-            filters=f,
-            kernel_size=(3, 3),
-            padding='same',
-            activation='relu'
-        )(x)
-        x = keras.layers.MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    for nodes in hidden_layers:
+        x = tf.keras.layers.Dense(nodes, activation='relu')(x)
 
-    encoder = keras.Model(inputs=inputs, outputs=x)
+    latent = tf.keras.layers.Dense(latent_dims, activation='relu')(x)
+    encoder = tf.keras.Model(inputs=inputs, outputs=latent)
 
     # --- Decoder ---
-    latent_inputs = keras.Input(shape=latent_dims)
+    latent_inputs = tf.keras.Input(shape=(latent_dims,))
     x = latent_inputs
+    for nodes in reversed(hidden_layers):
+        x = tf.keras.layers.Dense(nodes, activation='relu')(x)
 
-    # All convolutions in decoder except the last two
-    for f in reversed(filters[1:]):
-        x = keras.layers.Conv2D(
-            filters=f,
-            kernel_size=(3, 3),
-            padding='same',
-            activation='relu'
-        )(x)
-        x = keras.layers.UpSampling2D(size=(2, 2))(x)
+    outputs = tf.keras.layers.Dense(input_dims, activation='sigmoid')(x)
+    decoder = tf.keras.Model(inputs=latent_inputs, outputs=outputs)
 
-    # Second to last convolution: uses valid padding and upsampling
-    x = keras.layers.Conv2D(
-        filters=filters[0],
-        kernel_size=(3, 3),
-        padding='valid',
-        activation='relu'
-    )(x)
-    x = keras.layers.UpSampling2D(size=(2, 2))(x)
+    # --- Autoencoder ---
+    auto_outputs = decoder(encoder(inputs))
+    auto = tf.keras.Model(inputs=inputs, outputs=auto_outputs)
 
-    # Last convolution: same channels as input, sigmoid activation, no upsampling
-    outputs = keras.
+    auto.compile(optimizer='adam', loss='binary_crossentropy')
+
+    return encoder, decoder, auto
