@@ -12,4 +12,10 @@ def gensim_to_keras(model):
     Returns:
         keras.layers.Embedding: Trainable Keras Embedding layer.
     """
-    return model.wv.as_embedding(trainable=True)
+    vectors = model.wv.vectors
+    return tf.keras.layers.Embedding(
+        input_dim=vectors.shape[0],
+        output_dim=vectors.shape[1],
+        weights=[vectors],
+        trainable=True
+    )
