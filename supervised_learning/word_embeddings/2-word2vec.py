@@ -1,30 +1,29 @@
 #!/usr/bin/env python3
-"""Модуль, содержащий функцию word2vec_model."""
-from gensim.models import Word2Vec
+"""Module containing the word2vec_model function."""
+import gensim
 
 
 def word2vec_model(sentences, vector_size=100, min_count=5, window=5,
                    negative=5, cbow=True, epochs=5, seed=0, workers=1):
-    """Создаёт, строит и обучают модель gensim Word2Vec.
+    """Creates, builds and trains a gensim Word2Vec model.
 
     Args:
-        sentences (list): Список предложений для обучения.
-        vector_size (int): Размерность пространства эмбеддингов.
-        min_count (int): Минимальная частота слова для включения в словарь.
-        window (int): Максимальное расстояние между текущим и контекстным словом.
-        negative (int): Количество отрицательных примеров (negative sampling).
-        cbow (bool): True для архитектуры CBOW, False для Skip-gram.
-        epochs (int): Количество эпох (итераций обучения).
-        seed (int): Сид для генератора случайных чисел.
-        workers (int): Количество рабочих потоков.
+        sentences (list): List of sentences to be trained on.
+        vector_size (int): Dimensionality of the embedding layer.
+        min_count (int): Minimum number of occurrences for training.
+        window (int): Maximum distance between current and predicted word.
+        negative (int): Size of negative sampling.
+        cbow (bool): True for CBOW; False for Skip-gram.
+        epochs (int): Number of iterations to train over.
+        seed (int): Seed for the random number generator.
+        workers (int): Number of worker threads.
 
     Returns:
-        Word2Vec: Обученная модель gensim Word2Vec.
+        gensim.models.Word2Vec: The trained Word2Vec model.
     """
-    # sg = 0 обозначает CBOW, sg = 1 обозначает Skip-gram
     sg = 0 if cbow else 1
 
-    model = Word2Vec(
+    model = gensim.models.Word2Vec(
         sentences=sentences,
         vector_size=vector_size,
         min_count=min_count,
