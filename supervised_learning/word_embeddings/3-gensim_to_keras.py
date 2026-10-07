@@ -12,4 +12,4 @@ def gensim_to_keras(model):
     Returns:
         keras.layers.Embedding: Trainable Keras Embedding layer.
     """
-    return model.wv.get_keras_embedding(trainable=True)
+    return model.wv.as_embedding(trainable=True)
