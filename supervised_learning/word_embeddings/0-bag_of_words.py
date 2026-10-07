@@ -14,13 +14,14 @@ def bag_of_words(sentences, vocab=None):
 
     Returns:
         embeddings (numpy.ndarray): Shape (s, f) containing word counts.
-        features (list): List of the features used for embeddings.
+        features (numpy.ndarray): Array of the features used for embeddings.
     """
     cleaned_sentences = []
     for sentence in sentences:
         text = sentence.lower()
-        # Clean possessives like 's and extract alphanumeric tokens
+        # Remove possessives like 's
         text = re.sub(r"'s\b", "", text)
+        # Extract alphanumeric words
         words = re.findall(r"\b\w+\b", text)
         cleaned_sentences.append(words)
 
@@ -42,5 +43,8 @@ def bag_of_words(sentences, vocab=None):
         for word in words:
             if word in feat_to_idx:
                 embeddings[i, feat_to_idx[word]] += 1
+
+    # Convert features list to numpy array to match expected string format when printed
+    features = np.array(features)
 
     return embeddings, features
