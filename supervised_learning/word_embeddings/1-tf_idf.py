@@ -41,12 +41,8 @@ def tf_idf(sentences, vocab=None):
     tf = np.zeros((s, f), dtype=float)
     df = np.zeros(f, dtype=float)
 
-    # Calculate Term Frequency (TF) and Document Frequency (DF)
+    # Calculate raw Term Frequency (TF) and Document Frequency (DF)
     for i, words in enumerate(cleaned_sentences):
-        sentence_len = len(words)
-        if sentence_len == 0:
-            continue
-
         seen_in_sentence = set()
         for word in words:
             if word in feat_to_idx:
@@ -54,14 +50,10 @@ def tf_idf(sentences, vocab=None):
                 tf[i, idx] += 1
                 seen_in_sentence.add(idx)
 
-        # Normalize TF by the number of words in the sentence
-        tf[i] /= sentence_len
-
         for idx in seen_in_sentence:
             df[idx] += 1
 
-    # Compute Inverse Document Frequency (IDF) with log base e
-    # Avoid division by zero by handling terms with df > 0
+    # Compute IDF using natural log: ln(N / DF)
     idf = np.zeros(f, dtype=float)
     nonzero_df = df > 0
     idf[nonzero_df] = np.log(s / df[nonzero_df])
@@ -69,7 +61,7 @@ def tf_idf(sentences, vocab=None):
     # Compute final TF-IDF embeddings
     embeddings = tf * idf
 
-    # Convert features to numpy array to match Holberton test formatting
+    # Convert features to numpy array for exact print formatting
     features = np.array(features)
 
     return embeddings, features
