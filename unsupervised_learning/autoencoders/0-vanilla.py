@@ -1,24 +1,17 @@
 #!/usr/bin/env python3
 """
-Модуль для создания обычного (vanilla) автоэнкодера.
+Defines a vanilla autoencoder model.
 """
 import tensorflow.keras as keras
 
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
     """
-    Создает энкодер, декодер и общую модель автоэнкодера.
+    Creates an autoencoder network.
 
-    Параметры:
-        input_dims (int): размерность входных данных
-        hidden_layers (list): список с количеством нейронов для скрытых
-                              слоев энкодера
-        latent_dims (int): размерность скрытого пространства (латентного кода)
+    Args:
 
-    Возвращает:
-        encoder: модель энкодера
-        decoder: модель декодера
-        auto: скомпилированная модель автоэнкодера
-    """
-    # ------------------- ENCODER -------------------
-    inputs = keras.Input(shape=(
+        input_dims: integer containing the dimensions of the model input
+        hidden_layers: list containing the number of nodes for each hidden
+                       layer in the encoder, respectively
+        latent_dims
