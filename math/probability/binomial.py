@@ -33,7 +33,6 @@ class Binomial:
         if k < 0 or k > self.n:
             return 0
 
-        # Factorial function for combinations
         def factorial(num):
             res = 1
             for i in range(1, num + 1):
@@ -46,3 +45,14 @@ class Binomial:
 
         combination = n_fact / (k_fact * nk_fact)
         return combination * (self.p ** k) * ((1 - self.p) ** (self.n - k))
+
+    def cdf(self, k):
+        """Calculates the value of the CDF for a given number of successes."""
+        k = int(k)
+        if k < 0:
+            return 0
+
+        total = 0
+        for i in range(k + 1):
+            total += self.pmf(i)
+        return total
