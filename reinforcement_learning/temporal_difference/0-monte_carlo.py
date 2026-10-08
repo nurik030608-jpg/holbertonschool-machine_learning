@@ -1,45 +1,40 @@
 #!/usr/bin/env python3
-"""Module to perform the Monte Carlo algorithm for policy evaluation."""
+"""Monte Carlo algorithm for value estimation"""
 import numpy as np
 
 
 def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
                 alpha=0.1, gamma=0.99):
-    """Performs the Monte Carlo algorithm for policy evaluation.
+    """
+    Performs the Monte Carlo (every-visit) algorithm.
 
-    Args:
-        env: Environment instance.
-        V (numpy.ndarray): Array of shape (s,) containing the value estimate.
-        policy: Function that takes in a state and returns the next action.
-        episodes (int): Total number of episodes to train over.
-        max_steps (int): Maximum number of steps per episode.
-        alpha (float): Learning rate.
-        gamma (float): Discount rate.
+    env: environment instance
+    V: numpy.ndarray of shape (s,) with the value estimate
+    policy: function that takes a state and returns the next action
+    episodes: total number of episodes to train over
+    max_steps: maximum number of steps per episode
+    alpha: learning rate
+    gamma: discount rate
 
-    Returns:
-        numpy.ndarray: V, the updated value estimate.
+    Returns: V, the updated value estimate
     """
     for _ in range(episodes):
         state, _ = env.reset()
         episode = []
 
-        # Generate an episode following the policy
+        # generate an episode following the policy
         for _ in range(max_steps):
             action = policy(state)
             next_state, reward, terminated, truncated, _ = env.step(action)
-            episode.append((state, action, reward))
+            episode.append((state, reward))
+            state = next_state
             if terminated or truncated:
                 break
-            state = next_state
 
+        # update V from the end of the episode backwards
         G = 0
-        visited_states = set()
-
-        # Backward accumulation through the episode
-        for state, action, reward in reversed(episode):
-            G = gamma * G + reward
-            if state not in visited_states:
-                visited_states.add(state)
-                V[state] = V[state] + alpha * (G - V[state])
+        for state, reward in reversed(episode):
+            G = reward + gamma * G
+            V[state] = V[state] + alpha * (G - V[state])
 
     return V
