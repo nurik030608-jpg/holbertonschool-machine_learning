@@ -1,66 +1,58 @@
 #!/usr/bin/env python3
-"""
-Функция для построения identity block архитектуры ResNet с использованием Keras.
-"""
+"""Module that builds an identity block for a Deep Residual Network."""
 from tensorflow import keras as K
 
 
 def identity_block(A_prev, filters):
-    """
-    Строит identity block (блок идентичности) для ResNet.
+    """Builds an identity block as described in ResNet (2015).
 
-    Аргументы:
-        A_prev: тензор, выход из предыдущего слоя.
-        filters: список/кортеж с количеством фильтров [F11, F3, F12]:
-            F11: число фильтров в первой свертке 1x1.
-            F3: число фильтров в свертке 3x3.
-            F12: число фильтров во второй свертке 1x1.
+    Args:
+        A_prev: tf.Tensor, output from the previous layer.
+        filters: tuple or list containing (F11, F3, F12):
+            - F11: number of filters in the first 1x1 convolution.
+            - F3: number of filters in the 3x3 convolution.
+            - F12: number of filters in the second 1x1 convolution.
 
-    Возвращает:
-        Тензор, активированный выход блока идентичности.
+    Returns:
+        tf.Tensor, the activated output of the identity block.
     """
     F11, F3, F12 = filters
 
-    # Инициализатор весов He normal с фиксированным seed=0
-    he_normal = K.initializers.HeNormal(seed=0)
+    initializer = K.initializers.HeNormal(seed=0)
 
-    # --- ПЕРВЫЙ КОМПОНЕНТ ОСНОВНОГО ПУТИ ---
-    # Свертка 1х1 для уменьшения размерности (Bottleneck)
+    # Main Path - First Component (1x1 Conv)
     X = K.layers.Conv2D(
         filters=F11,
         kernel_size=(1, 1),
         strides=(1, 1),
         padding='valid',
-        kernel_initializer=he_normal
+        kernel_initializer=initializer
     )(A_prev)
     X = K.layers.BatchNormalization(axis=3)(X)
     X = K.layers.Activation('relu')(X)
 
-    # --- ВТОРОЙ КОМПОНЕНТ ОСНОВНОГО ПУТИ ---
-    # Свертка 3х3 (основное извлечение признаков)
+    # Main Path - Second Component (3x3 Conv)
     X = K.layers.Conv2D(
         filters=F3,
         kernel_size=(3, 3),
         strides=(1, 1),
-        padding='same',  # 'same' сохраняет пространственные размеры (H x W)
-        kernel_initializer=he_normal
+        padding='same',
+        kernel_initializer=initializer
     )(X)
     X = K.layers.BatchNormalization(axis=3)(X)
     X = K.layers.Activation('relu')(X)
 
-    # --- ТРЕТИЙ КОМПОНЕНТ ОСНОВНОГО ПУТИ ---
-    # Свертка 1х1 для восстановления (увеличения) размерности каналов
+    # Main Path - Third Component (1x1 Conv)
     X = K.layers.Conv2D(
         filters=F12,
         kernel_size=(1, 1),
         strides=(1, 1),
         padding='valid',
-        kernel_initializer=he_normal
+        kernel_initializer=initializer
     )(X)
     X = K.layers.BatchNormalization(axis=3)(X)
 
-    # --- ДОБАВЛЕНИЕ SHORTCUT (Skip Connection) ---
-    # Поэлементное сложение преобразованного пути со входным тензором A_prev
+    # Add Shortcut Connection (A_prev) to Main Path and Activation
     X = K.layers.Add()([X, A_prev])
     X = K.layers.Activation('relu')(X)
 
