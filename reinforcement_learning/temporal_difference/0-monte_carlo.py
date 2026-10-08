@@ -6,7 +6,7 @@ import numpy as np
 def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
                 alpha=0.1, gamma=0.99):
     """
-    Performs the Monte Carlo (every-visit) algorithm.
+    Performs the first-visit Monte Carlo algorithm.
 
     env: environment instance
     V: numpy.ndarray of shape (s,) with the value estimate
@@ -31,10 +31,20 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
             if terminated or truncated:
                 break
 
-        # update V from the end of the episode backwards
+        # first-visit: return that follows the first occurrence of each state
+        first_visit = {}
+        for t, (s, _) in enumerate(episode):
+            if s not in first_visit:
+                first_visit[s] = t
+
+        # compute returns backwards
         G = 0
-        for state, reward in reversed(episode):
-            G = reward + gamma * G
-            V[state] = V[state] + alpha * (G - V[state])
+        returns = [0] * len(episode)
+        for t in range(len(episode) - 1, -1, -1):
+            G = episode[t][1] + gamma * G
+            returns[t] = G
+
+        for s, t in first_visit.items():
+            V[s] = V[s] + alpha * (returns[t] - V[s])
 
     return V
