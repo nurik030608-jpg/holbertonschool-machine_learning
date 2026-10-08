@@ -35,7 +35,7 @@ def monte_carlo(env, V, policy, episodes=5000, max_steps=100,
         G = 0
         visited_states = set()
 
-        # Process the episode in reverse (First-Visit Monte Carlo)
+        # Backward accumulation through the episode
         for state, action, reward in reversed(episode):
             G = gamma * G + reward
             if state not in visited_states:
