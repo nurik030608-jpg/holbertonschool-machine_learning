@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Module that builds a projection block for a Deep Residual Network."""
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def projection_block(A_prev, filters, s=2):
