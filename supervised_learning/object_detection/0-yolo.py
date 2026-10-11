@@ -14,7 +14,8 @@ class Yolo:
             classes_path (str): Path to the list of class names.
             class_t (float): Box score threshold for initial filtering.
             nms_t (float): IOU threshold for non-max suppression.
-            anchors (numpy.ndarray): Anchor boxes of shape (outputs, anchor_boxes, 2).
+            anchors (numpy.ndarray): Anchor boxes of shape
+                (outputs, anchor_boxes, 2).
         """
         self.model = keras.models.load_model(model_path)
         with open(classes_path, 'r', encoding='utf-8') as f:
