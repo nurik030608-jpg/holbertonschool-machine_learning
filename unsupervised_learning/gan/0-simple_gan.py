@@ -10,8 +10,9 @@ class Simple_GAN(keras.Model):
     """Represents a simple Generative Adversarial Network (GAN)."""
 
     def __init__(
-        self, generator, discriminator, latent_generator, real_examples,
-        batch_size=200, disc_iter=2, learning_rate=0.005
+        self, generator, discriminator, latent_generator,
+        real_examples, batch_size=200, disc_iter=2,
+        learning_rate=0.005
     ):
         """Initialize the Simple_GAN instance.
 
@@ -20,8 +21,9 @@ class Simple_GAN(keras.Model):
             discriminator (keras.Model): Discriminator network.
             latent_generator (callable): Function to generate latent vectors.
             real_examples (tf.Tensor): Dataset of real examples.
-            batch_size (int, optional): Size of training batches. Defaults to 200.
-            disc_iter (int, optional): Discriminator steps per generator step.
+            batch_size (int, optional): Size of training batches.
+                Defaults to 200.
+            disc_iter (int, optional): Discriminator steps per generator.
                 Defaults to 2.
             learning_rate (float, optional): Learning rate for Adam.
                 Defaults to 0.005.
@@ -85,8 +87,7 @@ class Simple_GAN(keras.Model):
         return tf.gather(self.real_examples, random_indices)
 
     def train_step(self, useless_argument):
-        """Execute a single training step for the GAN (discriminator & generator)."""
-        # Train the discriminator disc_iter times
+        """Execute a single training step for the GAN."""
         for _ in range(self.disc_iter):
             with tf.GradientTape() as tape:
                 real_sample = self.get_real_sample()
@@ -104,7 +105,6 @@ class Simple_GAN(keras.Model):
                 zip(gradients, self.discriminator.trainable_variables)
             )
 
-        # Train the generator once
         with tf.GradientTape() as tape:
             fake_sample = self.get_fake_sample(training=True)
             disc_fake = self.discriminator(fake_sample, training=True)
