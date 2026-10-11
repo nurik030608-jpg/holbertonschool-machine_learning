@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Module that defines the RNNEncoder class for machine translation."""
-from tensorflow import keras as K
+import tensorflow as tf
 
 
-class RNNEncoder(K.layers.Layer):
+class RNNEncoder(tf.keras.layers.Layer):
     """Represents an encoder for machine translation using an RNN/GRU."""
 
     def __init__(self, vocab, embedding, units, batch):
@@ -18,11 +18,11 @@ class RNNEncoder(K.layers.Layer):
         super(RNNEncoder, self).__init__()
         self.batch = batch
         self.units = units
-        self.embedding = K.layers.Embedding(
+        self.embedding = tf.keras.layers.Embedding(
             input_dim=vocab,
             output_dim=embedding
         )
-        self.gru = K.layers.GRU(
+        self.gru = tf.keras.layers.GRU(
             units=units,
             return_sequences=True,
             return_state=True,
