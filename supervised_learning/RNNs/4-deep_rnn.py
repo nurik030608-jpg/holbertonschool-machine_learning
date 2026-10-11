@@ -13,12 +13,14 @@ def deep_rnn(rnn_cells, X, h_0):
 
     Returns:
         tuple: (H, Y)
-            - H: numpy.ndarray of shape (t + 1, l, m, h) containing all hidden states.
-            - Y: numpy.ndarray of shape (t, m, o) containing all outputs.
+            - H: numpy.ndarray of shape (t + 1, l, m, h)
+              containing all hidden states.
+            - Y: numpy.ndarray of shape (t, m, o)
+              containing all outputs.
     """
     t, m, _ = X.shape
     l, _, h = h_0.shape
-    
+
     H = np.zeros((t + 1, l, m, h))
     H[0] = h_0
 
