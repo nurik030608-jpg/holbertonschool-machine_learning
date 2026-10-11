@@ -1,4 +1,3 @@
-#!/usr/init/env python3
 #!/usr/bin/env python3
 """Module to create an encoder block for a transformer architecture."""
 import tensorflow as tf
