@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-"""Module that defines a neural network with one hidden layer for binary classification."""
+"""Module that defines a neural network with one hidden layer
+
+for binary classification.
+"""
 import numpy as np
 
 
 class NeuralNetwork:
-    """Defines a neural network with one hidden layer performing classification."""
+    """Defines a neural network with one hidden layer
+
+    performing classification.
+    """
 
     def __init__(self, nx, nodes):
         """Initialize the NeuralNetwork instance.
