@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 
 
 class WGAN_GP(keras.Model):
-    """Represents a Wasserstein GAN with Gradient Penalty and weight loading."""
+    """Represents a Wasserstein GAN with
+    Gradient Penalty and weight loading.
+    """
 
     def __init__(
         self, generator, discriminator, latent_generator,
@@ -80,7 +82,8 @@ class WGAN_GP(keras.Model):
         )
 
     def replace_weights(self, gen_h5, disc_h5):
-        """Load and replace weights for generator and discriminator from h5 files.
+        """Load and replace weights for
+        generator and discriminator from h5 files.
 
         Args:
             gen_h5 (str): Path to generator weights file.
