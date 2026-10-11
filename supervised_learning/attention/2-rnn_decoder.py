@@ -44,7 +44,8 @@ class RNNDecoder(tf.keras.layers.Layer):
         Returns:
             tuple: (y, s)
                 - y: Tensor of shape (batch, vocab) containing output word.
-                - s: Tensor of shape (batch, units) containing new hidden state.
+                - s: Tensor of shape (batch, units) containing
+                  new hidden state.
         """
         context, _ = self.attention(s_prev, hidden_states)
         x = self.embedding(x)
