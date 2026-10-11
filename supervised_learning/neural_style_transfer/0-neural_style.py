@@ -80,5 +80,6 @@ class NST:
             method=tf.image.ResizeMethod.BICUBIC
         )
         scaled = image_resized / 255.0
+        scaled = tf.clip_by_value(scaled, 0.0, 1.0)
         scaled = tf.expand_dims(scaled, axis=0)
         return scaled
