@@ -82,7 +82,9 @@ class Neuron:
         return prediction, cost
 
     def gradient_descent(self, X, Y, A, alpha=0.05):
-        """Calculate one pass of gradient descent on the neuron and update weights.
+        """Calculate one pass of gradient descent
+
+        on the neuron and update weights.
 
         Args:
             X (numpy.ndarray): Input data of shape (nx, m).
