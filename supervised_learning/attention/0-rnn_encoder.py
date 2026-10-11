@@ -1,3 +1,4 @@
+#!/usr/init/env python3
 #!/usr/bin/env python3
 """Module that defines the RNNEncoder class for machine translation."""
 import tensorflow as tf
@@ -26,7 +27,7 @@ class RNNEncoder(tf.keras.layers.Layer):
             units=units,
             return_sequences=True,
             return_state=True,
-            kernel_initializer='glorot_uniform'
+            recurrent_initializer='glorot_uniform'
         )
 
     def initialize_hidden_state(self):
