@@ -1,4 +1,3 @@
-#!/usr/init/env python3
 #!/usr/bin/env python3
 """Module that defines the RNNEncoder class for machine translation."""
 import tensorflow as tf
@@ -42,10 +41,10 @@ class RNNEncoder(tf.keras.layers.Layer):
         """Forward pass for the encoder layer.
 
         Args:
-            x (tf.Tensor): Tensor of shape (batch, input_seq_len) containing word
-                indices.
-            initial (tf.Tensor): Tensor of shape (batch, units) containing the
-                initial hidden state.
+            x (tf.Tensor): Tensor of shape (batch, input_seq_len) containing
+                word indices.
+            initial (tf.Tensor): Tensor of shape (batch, units) containing
+                the initial hidden state.
 
         Returns:
             tuple: (outputs, hidden)
